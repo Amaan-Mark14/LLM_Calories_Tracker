@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        // BMR Calculation Logic
+        function calculateBMR() {
+            const gender = document.getElementById('gender').value;
+            const age = parseInt(document.getElementById('age').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            
+            let bmr = 0;
+            if (gender === 'male') {
+                bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+            } else if (gender === 'female') {
+                bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+            }
+            document.getElementById('bmr').value = Math.round(bmr);
+        }
+
+        // Autofill Default Values
+        function autoFill() {
+            document.getElementById('name').value = "John Doe";
+            document.getElementById('age').value = 30;
+            document.getElementById('height').value = 175;
+            document.getElementById('weight').value = 70;
+            document.getElementById('gender').value = "male";
+            calculateBMR();
+        }
+
+        // Handle Create User Submission
+        function handleCreateUser(event) {
+            const weightField = document.getElementById('weight');
+            weightField.value = weightField.value * 1000;  // Convert kg to grams before submitting
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="left-half">
+            <h2>Create a New User</h2>
+            <form action="/create_user" method="POST" onsubmit="handleCreateUser()">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" required>
+
+                <label for="height">Height (cm):</label>
+                <input type="number" id="height" name="height" step="0.1" required>
+
+                <label for="weight">Weight (kg):</label>
+                <input type="number" id="weight" name="weight" step="0.1" required>
+
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+
+                <label for="bmr">BMR:</label>
+                <input type="number" id="bmr" name="bmr" readonly>
+
+                <!-- Buttons for BMR Calculation and Autofill -->
+                <div class="buttons">
+                    <button type="button" onclick="calculateBMR()">Calculate BMR</button>
+                    <button type="button" onclick="autoFill()">Auto Fill</button>
+                    <button type="submit">Create User</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="right-half">
+            <h2>Already a User?</h2>
+            <ul>
+                {% for user in users %}
+                <li><a href="{{ url_for('diet', user_id=user['id']) }}">{{ user['name'] }} (ID: {{ user['id'] }})</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

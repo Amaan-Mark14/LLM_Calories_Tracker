@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Weight Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Prepare data for the chart (convert grams to kg)
+        function createChart(historicalData, predictedData) {
+            const ctx = document.getElementById('weightChart').getContext('2d');
+
+            // Dates and weights for the historical data
+            const historicalDates = historicalData.map(item => item.date);
+            const historicalWeights = historicalData.map(item => item.weight / 1000); // Convert g to kg
+
+            // Dates and weights for the predicted data
+            const predictedDates = predictedData.map(item => item.date);
+            const predictedWeights = predictedData.map(item => item.weight / 1000); // Convert g to kg
+
+            // Merge dates and weights into one dataset for both historical and predicted
+            const chartData = {
+                labels: [...historicalDates, ...predictedDates], // X-axis
+                datasets: [{
+                    label: 'Historical Weight (kg)',
+                    data: historicalWeights,  // Y-axis historical weights
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 2,
+                    fill: true
+                },
+                {
+                    label: 'Predicted Weight (kg)',
+                    data: [...Array(historicalWeights.length).fill(null), ...predictedWeights],  // Predicted weights start after historical
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderWidth: 2,
+                    fill: true
+                }]
+            };
+
+            // Create the chart using Chart.js
+            new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Weight (kg)'
+                            },
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' kg';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Example function to call when the page loads
+        window.onload = function() {
+            // Use the data passed from the backend
+            const historicalData = {{ historical_data|tojson }};
+            const predictedData = {{ predicted_data|tojson }};
+            createChart(historicalData, predictedData);
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="right-half">
+            <h2>User ID: {{ user_id }}</h2>
+
+            <!-- Canvas for Chart.js -->
+            <canvas id="weightChart" width="400" height="400"></canvas>
+        </div>
+    </div>
+</body>
+</html>

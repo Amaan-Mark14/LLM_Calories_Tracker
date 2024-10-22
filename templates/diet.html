@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Diet</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        window.onload = function() {
+            document.getElementById('total-calories').value = 0;
+        };
+
+        function getCalories() {
+            const food = document.getElementById('food').value;
+
+            // Create form data object
+            const formData = new FormData();
+            formData.append('food', food);
+
+            // Send POST request to the server
+            fetch('/get_calories/food', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.calories) {
+                    // Update the UI with the received calories
+                    document.getElementById('calories').value = data.calories;
+                } else {
+                    console.error(data.error || "Error fetching calories");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+
+        // Function to add food and calories to the food list without refreshing
+        function addToList() {
+            const food = document.getElementById('food').value;
+            const calories = document.getElementById('calories').value;
+
+            if (!food || !calories) {
+                alert("Please enter both food and calories!");
+                return;
+            }
+
+            const foodList = document.getElementById('food-list');
+            const newFoodItem = document.createElement('li');
+            newFoodItem.textContent = `${food} - ${calories} kcal`;
+            foodList.appendChild(newFoodItem);
+
+            // Add calories to total
+            let totalCalories = parseInt(document.getElementById('total-calories').value);
+            totalCalories += parseInt(calories);
+            document.getElementById('total-calories').value = totalCalories;
+
+            // Clear input fields
+            document.getElementById('food').value = '';
+            document.getElementById('calories').value = '';
+        }
+
+        // Handle form submission to /add_diet
+        function handleSubmitDiet(event) {
+            const weightField = document.getElementById('current-weight');
+            weightField.value = weightField.value * 1000;  // Convert kg to grams
+
+            const dateField = document.getElementById('date');
+            const date = new Date(dateField.value);
+            const formattedDate = date.toISOString().slice(0, 10).replace(/-/g, '');  // Format to yyyymmdd
+            document.getElementById('formatted-date').value = formattedDate;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="left-half">
+            <h2>Diet Entry</h2>
+            <form id="food-form">
+                <label for="food">Food:</label>
+                <input type="text" id="food" name="food" required>
+
+                <label for="calories">Calories:</label>
+                <input type="number" id="calories" name="calories">
+
+                <!-- Buttons for Getting Calories and Adding to List -->
+                <div class="buttons">
+                    <button type="button" onclick="getCalories()">Get Calories</button>
+                    <button type="button" onclick="addToList()">Add to List</button>
+                </div>
+
+                <!-- Date Picker -->
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" required>
+            </form>
+        </div>
+
+        <div class="right-half">
+            <h2>User ID: {{ user_id }}</h2>
+
+            <h3>Food List</h3>
+            <ul id="food-list">
+                <!-- Dynamically added food items will appear here -->
+            </ul>
+
+            <form action="/add_diet" method="POST" onsubmit="handleSubmitDiet(event)">
+                <input type="hidden" id="user-id" name="user_id" value="{{ user_id }}">
+            
+                <label for="total-calories">Total Calories:</label>
+                <input type="number" id="total-calories" name="calories" value="0" required>
+            
+                <label for="current-weight">Current Weight (kg):</label>
+                <input type="number" id="current-weight" name="weight" step="0.1" required>
+            
+                <!-- Hidden field to store formatted date -->
+                <input type="hidden" id="formatted-date" name="date">
+                
+                <button type="submit">Submit Diet</button>
+            </form>                     
+        </div>
+    </div>
+</body>
+</html>
