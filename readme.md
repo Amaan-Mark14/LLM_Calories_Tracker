@@ -20,12 +20,24 @@ LLM Calories Tracker is a Flask-based web application designed to help users tra
 - **Improved Prediction Model**: The current forecasting method is simplistic. It could be enhanced by incorporating more sophisticated models trained on larger datasets.
 
 ## Images
-![Seting up new user](<Screenshot 2024-10-22 at 21-04-43 User Registration.png>)
-![Getting BMR](<Screenshot 2024-10-22 at 21-04-51 User Registration.png>)
-![Getting calories from llm](<Screenshot 2024-10-22 210557.png>)
-![Adding food to list](<Screenshot 2024-10-22 210744.png>)
-![Final list and adding date](<Screenshot 2024-10-22 at 21-08-08 User Diet.png>)
-![Results page](<Screenshot 2024-10-22 at 21-08-16 User Weight Prediction.png>)
+
+### Seting up new user
+![Seting up new user](<screenshots\Screenshot 2024-10-22 at 21-04-43 User Registration.png>)
+
+### Calculating BMR
+![Calculating BMR](<screenshots\Screenshot 2024-10-22 at 21-04-51 User Registration.png>)
+
+### Getting calories from llm
+![Getting calories from llm](<screenshots\Screenshot 2024-10-22 210557.png>)
+
+### Adding food to list
+![Adding food to list](<screenshots\Screenshot 2024-10-22 210744.png>)
+
+### Final list and adding date
+![Final list and adding date](<screenshots\Screenshot 2024-10-22 at 21-08-08 User Diet.png>)
+
+### Results page
+![Results page](<screenshots\Screenshot 2024-10-22 at 21-08-16 User Weight Prediction.png>)
 
 Feel free to recommend projects or improvments.
 If you found this project helpful or interesting, please consider giving this repository a star ⭐! 
